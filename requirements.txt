@@ -1,0 +1,4 @@
+matplotlib==3.10.6
+numpy==2.3.3
+qutip==5.0.4
+tqdm==4.66.6
