@@ -529,7 +529,6 @@ def cavity_qubit_multitone_hamiltonian(
     a = qt.destroy(cavity_levels) & qt.qeye(qubit_levels)
 
     # We use a fixed rotating frame instead of basing it off the drive amplitudes.
-    # This might yield better results.
     omegac_0 = cavity_frequency + delta - disp_shift
     omegaq_0 = qubit_frequency - delta
 
@@ -608,7 +607,6 @@ def cavity_qubit_multitone_hamiltonian(
         ],
     ]
 
-    # TODO: Last term is technically wrong, should be displaced b
     c_ops = [
         np.sqrt(kappa_c) * a,
         np.sqrt(kappa_1q) * b,
@@ -642,9 +640,6 @@ def early_rwa_hamiltonian(
         qubit_drive_index = 0
     if cavity_drive_index is None:
         cavity_drive_index = 0
-    # assert (
-    #     drives.num_qubit_drives == 1 and drives.num_cavity_drives == 1
-    # ), "snappa_effective_hamiltonian_const requires a singletone drive on both qubit and cavity."
 
     if drives.num_qubit_drives > 0:
         qubit_drive_frequency = drives.qubit_frequencies[qubit_drive_index]
@@ -656,9 +651,6 @@ def early_rwa_hamiltonian(
     else:
         cavity_drive_frequency = cavity_frequency
 
-    # We are in a corotating frame, rotating at the drive frequencies
-    # Since both qubit and cavity drives are single tone, xi1 and xi2
-    # are constant
     xi1 = drives.qubit_xi(0, qubit_frequency, qubit_drive_frequency, kappa=kappa_1q)
     xi1_cr = drives.qubit_xi_cr(0, qubit_frequency, qubit_drive_frequency, kappa=kappa_1q)
     xi2 = drives.cavity_xi(0, cavity_frequency, cavity_drive_frequency, kappa=kappa_c)
@@ -693,12 +685,12 @@ def early_rwa_hamiltonian(
         * b.dag()
         * a.dag()
     )
-    # H_coupling += (
-    #     -disp_shift
-    #     * (xi1.conjugate() * xi2 + xi1_cr * xi2_cr.conjugate() / 6)
-    #     * b
-    #     * a.dag()
-    # )
+    H_coupling += (
+        -disp_shift
+        * (xi1.conjugate() * xi2 + xi1_cr * xi2_cr.conjugate() / 6)
+        * b
+        * a.dag()
+    )
     H_coupling += H_coupling.dag()
 
     H = H0 + H_coupling
@@ -738,9 +730,6 @@ def cavity_qubit_singletone_hamiltonian(
         qubit_drive_index = 0
     if cavity_drive_index is None:
         cavity_drive_index = 0
-    # assert (
-    #     drives.num_qubit_drives == 1 and drives.num_cavity_drives == 1
-    # ), "snappa_effective_hamiltonian_const requires a singletone drive on both qubit and cavity."
 
     if drives.num_qubit_drives > 0:
         qubit_drive_frequency = drives.qubit_frequencies[qubit_drive_index]
@@ -752,9 +741,6 @@ def cavity_qubit_singletone_hamiltonian(
     else:
         cavity_drive_frequency = cavity_frequency
 
-    # We are in a corotating frame, rotating at the drive frequencies
-    # Since both qubit and cavity drives are single tone, xi1 and xi2
-    # are constant
     xi1 = drives.qubit_xi(0, qubit_frequency, qubit_drive_frequency, kappa=kappa_1q)
     xi1_cr = drives.qubit_xi_cr(
         0, qubit_frequency, qubit_drive_frequency, kappa=kappa_1q
@@ -790,17 +776,15 @@ def cavity_qubit_singletone_hamiltonian(
         - disp_shift_corr / 2 * a.dag() * a.dag() * a * a * b.dag() * b
     )
 
-    # cavity_kerr = 0
-
     H_alpha = 0
     H_alpha += -qubit_anharmonicity / 2 * (xi1**2) * b.dag() * b.dag()
     H_alpha += qubit_anharmonicity * (xi1 + xi1_cr.conjugate()) * b.dag() * b.dag() * b
     H_alpha += H_alpha.dag()
 
     H_kerr = 0
-    # H_kerr += -cavity_kerr / 2 * (xi2**2) * a.dag() * a.dag()
-    # H_kerr += cavity_kerr * (xi2 + xi2_cr.conjugate()) * a.dag() * a.dag() * a
-    # H_kerr += H_kerr.dag()
+    H_kerr += -cavity_kerr / 2 * (xi2**2) * a.dag() * a.dag()
+    H_kerr += cavity_kerr * (xi2 + xi2_cr.conjugate()) * a.dag() * a.dag() * a
+    H_kerr += H_kerr.dag()
 
     H_coupling = 0
     H_coupling += (
@@ -815,20 +799,17 @@ def cavity_qubit_singletone_hamiltonian(
         * b
         * a.dag()
     )
-    # xi2_cr = complex(0) # Having this gives best resuls in Stark shift fit
     H_coupling += disp_shift * (xi2 + xi2_cr.conjugate() / 6) * b.dag() * b * a.dag()
     H_coupling += disp_shift * (xi1 + xi1_cr.conjugate() / 6) * b.dag() * a.dag() * a
     H_coupling += H_coupling.dag()
 
-    # xi2_cr = complex(0)
-
     H_linear = 0
     H_linear += qubit_anharmonicity * xi1 * (xi1.conjugate() * xi1) * b.dag()
-    # H_linear += cavity_kerr * xi2 * (xi2.conjugate() * xi2) * a.dag()
+    H_linear += cavity_kerr * xi2 * (xi2.conjugate() * xi2) * a.dag()
     H_linear += disp_shift * xi1 * (xi2.conjugate() * xi2) * b.dag()
     H_linear += disp_shift * xi2 * (xi1.conjugate() * xi1) * a.dag()
     H_linear += (qubit_anharmonicity + disp_shift / 12) * xi1_cr.conjugate() * b.dag()
-    # H_linear += (cavity_kerr + disp_shift / 12) * xi2_cr.conjugate() * a.dag()
+    H_linear += (cavity_kerr + disp_shift / 12) * xi2_cr.conjugate() * a.dag()
     H_linear += H_linear.dag()
 
     H = H0 + H_alpha + H_kerr + H_coupling + H_linear
