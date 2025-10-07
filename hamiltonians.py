@@ -507,7 +507,7 @@ def cavity_qubit_single_qubit_drive_hamiltonian(
         np.sqrt(kappa_2q) * b_disp.dag() * b_disp,
     ]
 
-    return qt.QobjEvo(H), c_ops, omegac_0, omegaq_0
+    return qt.QobjEvo(H), c_ops
 
 
 def cavity_qubit_multitone_hamiltonian(
@@ -614,7 +614,7 @@ def cavity_qubit_multitone_hamiltonian(
         np.sqrt(kappa_1q) * b,
         np.sqrt(kappa_2q) * b.dag() * b,
     ]
-    return qt.QobjEvo(H), c_ops, omegac_0, omegaq_0
+    return qt.QobjEvo(H), c_ops
 
 
 def early_rwa_hamiltonian(
@@ -710,7 +710,7 @@ def early_rwa_hamiltonian(
         np.sqrt(kappa_2q) * b_disp.dag() * b_disp,
     ]
 
-    return H, c_ops, cavity_drive_frequency, qubit_drive_frequency
+    return H, c_ops
 
 
 def cavity_qubit_singletone_hamiltonian(
@@ -840,5 +840,5 @@ def cavity_qubit_singletone_hamiltonian(
         np.sqrt(kappa_2q) * b_disp.dag() * b_disp,
     ]
 
-    return H, c_ops, cavity_drive_frequency, qubit_drive_frequency
+    return H, c_ops
 
