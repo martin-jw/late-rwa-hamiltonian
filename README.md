@@ -1,6 +1,6 @@
 # Late RWA effective Hamiltonian
 
-![Zenodo DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22304140.svg)
+[![DOI](https://zenodo.org/badge/1070681256.svg)](https://doi.org/10.5281/zenodo.22304006)
 
 This is the repository for the code to generate the data presented in [Effective Hamiltonian for an off-resonantly driven qubit-cavity system](https://doi.org/10.1103/y7xr-jq5w).
 
